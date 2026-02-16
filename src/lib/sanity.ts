@@ -1,14 +1,16 @@
 import { createClient } from "next-sanity";
-import createImageUrlBuilder from "@sanity/image-url"; // Ojo acá
+import createImageUrlBuilder from "@sanity/image-url";
 
 export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID, 
+  // BORRÁ process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
+  // Y PONÉ ESTO:
+  projectId: "wrubiu1d", 
+  
   dataset: "production",
   apiVersion: "2024-01-01",
   useCdn: false, 
 });
 
-// CAMBIO CLAVE: Usamos la función directa
 const builder = createImageUrlBuilder(client);
 
 export function urlFor(source: any) {
