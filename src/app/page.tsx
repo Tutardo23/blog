@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Hero from "@/components/Hero";
 import AnalogStrip from "@/components/AnalogStrip"; // La tira de cine
 import LatestPosts from "@/components/LatestPosts";
