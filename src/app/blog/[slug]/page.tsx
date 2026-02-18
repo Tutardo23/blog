@@ -19,13 +19,16 @@ async function getPost(slug: string) {
 export default async function BlogPost({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  if (!params?.slug) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
+
+  if (!slug) {
     return <div>No slug</div>;
   }
 
-  const post = await getPost(params.slug);
+  const post = await getPost(slug);
 
   if (!post) {
     return <div>Post no encontrado :(</div>;
@@ -34,7 +37,7 @@ export default async function BlogPost({
   return (
     <>
       <BlogPostView post={post} />
-      <MoreStories currentSlug={params.slug} />
+      <MoreStories currentSlug={slug} />
     </>
   );
 }
