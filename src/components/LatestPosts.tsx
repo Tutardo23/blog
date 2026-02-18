@@ -3,22 +3,25 @@ import PostGrid from "./PostGrid";
 import SectionHeader from "./SectionHeader";
 
 // Traemos TODO (sin límite, ordenado por lo más nuevo)
-async function getAllPosts() {
-  const query = `
-    *[_type == "post"] | order(publishedAt desc) {
-      title,
-      slug,
-      mainImage,
-      publishedAt,
-      "categoria": categories[0]->title
-    }
-  `;
-  const data = await client.fetch(query);
-  return data;
+async function getPosts() {
+  // Esta consulta es simple: solo pide título y slug si es que existe
+  const query = `*[_type == "post"] | order(publishedAt desc) {
+    title,
+    "slug": slug.current,
+    mainImage,
+    publishedAt
+  }`;
+  
+  try {
+    const data = await client.fetch(query);
+    return data;
+  } catch (error) {
+    console.error("Error al traer posts:", error);
+    return [];
+  }
 }
-
 export default async function LatestPosts() {
-  const posts = await getAllPosts();
+  const posts = await getPosts();
 
   return (
     <section className="relative w-full px-4 pb-24 pt-12 min-h-screen">
