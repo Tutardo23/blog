@@ -1,11 +1,42 @@
+import { client } from "@/lib/sanity";
+import BlogPostView from "@/components/BlogPostView";
+import MoreStories from "@/components/MoreStories";
+
 export const dynamic = "force-dynamic";
+
+async function getPost(slug: string) {
+  const query = `*[_type == "post" && slug.current == "${slug}"][0]{
+    title,
+    mainImage,
+    body,
+    _createdAt,
+    "categoria": categories[0]->title
+  }`;
+
+  return await client.fetch(query);
+}
 
 export default async function BlogPost({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const resolvedParams = await params;
+  const slug = params.slug;
 
-  return <div>Slug recibido: {resolvedParams.slug}</div>;
+  if (!slug) {
+    return <div>No slug</div>;
+  }
+
+  const post = await getPost(slug);
+
+  if (!post) {
+    return <div>Post no encontrado :(</div>;
+  }
+
+  return (
+    <>
+      <BlogPostView post={post} />
+      <MoreStories currentSlug={slug} />
+    </>
+  );
 }
