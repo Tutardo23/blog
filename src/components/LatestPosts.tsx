@@ -1,31 +1,16 @@
-import { client } from "@/lib/sanity";
 import PostGrid from "./PostGrid";
 import SectionHeader from "./SectionHeader";
 
-// Traemos TODO (sin límite, ordenado por lo más nuevo)
-async function getPosts() {
-  // Esta consulta es simple: solo pide título y slug si es que existe
-  const query = `*[_type == "post"] | order(publishedAt desc) {
-    title,
-    "slug": slug.current,
-    mainImage,
-    publishedAt
-  }`;
-  
-  try {
-    const data = await client.fetch(query);
-    return data;
-  } catch (error) {
-    console.error("Error al traer posts:", error);
-    return [];
-  }
+// Definimos qué tipo de datos esperamos recibir
+interface LatestPostsProps {
+  posts: any[];
 }
-export default async function LatestPosts() {
-  const posts = await getPosts();
 
+// Eliminamos el fetch de aquí adentro porque ahora lo hace el padre (page.tsx)
+export default function LatestPosts({ posts }: LatestPostsProps) {
   return (
     <section className="relative w-full px-4 pb-24 pt-12 min-h-screen">
-      <div className="container mx-auto max-w-7xl"> {/* Ancho máximo más grande */}
+      <div className="container mx-auto max-w-7xl">
         
         {/* Título General */}
         <div className="mb-12 border-b border-[#831843]/10 pb-6">
@@ -35,10 +20,10 @@ export default async function LatestPosts() {
            </p>
         </div>
 
-        {/* El Feed Infinito */}
+        {/* El Feed con los datos que llegan por props */}
         <PostGrid posts={posts} />
 
-        {/* Mensaje final sutil cuando no hay más */}
+        {/* Mensaje final */}
         <div className="mt-20 text-center">
            <span className="text-xs font-bold uppercase tracking-widest text-[#831843]/30">
              Fin de las historias por hoy
