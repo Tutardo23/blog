@@ -2,31 +2,20 @@ import { client } from "@/lib/sanity";
 import BlogPostView from "@/components/BlogPostView";
 import MoreStories from "@/components/MoreStories";
 
-// 🔥 Genera los slugs para el build estático
-export async function generateStaticParams() {
-  const posts = await client.fetch(
-    `*[_type == "post"]{ "slug": slug.current }`
-  );
+export const dynamic = "force-dynamic"; // 🔥 Esto evita problemas de build
 
-  return posts.map((post: any) => ({
-    slug: post.slug,
-  }));
-}
-
-// 🔥 Query dinámica SIN $slug (evita error en build)
-function getPostQuery(slug: string) {
-  return `*[_type == "post" && slug.current == "${slug}"][0]{
+const query = `
+  *[_type == "post" && slug.current == $slug][0]{
     title,
     mainImage,
     body,
     _createdAt,
     "categoria": categories[0]->title
-  }`;
-}
+  }
+`;
 
 async function getPost(slug: string) {
-  const query = getPostQuery(slug);
-  return await client.fetch(query);
+  return await client.fetch(query, { slug });
 }
 
 export default async function BlogPost({
